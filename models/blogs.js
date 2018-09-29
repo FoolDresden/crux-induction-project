@@ -19,7 +19,14 @@ var blogSchema = mongoose.Schema({
     type: String,
   },
   comments:{
-    type: [{type: String}],
+    type: [{
+      text:{
+        type: String,
+      },
+      author:{
+        type:String,
+      }
+    }],
     default: [],
   },
 });

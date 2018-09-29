@@ -12,6 +12,7 @@ var {User} =require('./models/user.js');
 var app = express();
 
 app.set('view engine', 'hbs');
+app.use(express.static(path.join(__dirname, '/views/')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({secret: 'lala'}))
@@ -44,6 +45,8 @@ app.get('/blogs/:id', (req, res)=>{
         name: doc.name,
         body: doc.body,
         author: doc.author,
+        comments: doc.comments,
+        user: req.session.User.name,
       })
     }
   });
@@ -117,6 +120,21 @@ app.post('/login', (req, res)=>{
     }
   });
 })
+
+app.post('/blogs/comments/:id', (req, res)=>{
+  // console.log("hi");
+  // console.log(req.body);
+  // console.log(req.params.id);
+  Blog.findOne({name: req.params.id}).then((doc)=>{
+    var data = {
+      text: req.body.comment,
+      author: req.session.User.name,
+    }
+    console.log(data);
+    doc.comments.push(data);
+    doc.save();
+  });
+});
 
 app.listen(3000, function(){
   console.log('Hi');
